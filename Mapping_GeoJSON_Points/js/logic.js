@@ -37,10 +37,11 @@ L.geoJSON(sanFranAirport, {
   pointToLayer: function(feature, latlng) {
     console.log(feature);
     return L.marker(latlng);
-    .bindPopup("<h2>" + feature.properties.city + "</h2>");
+    .bindPopup("<h2>" + feature.properties.city + "</h2>")
   }
+  .addTo(map)
+})
 
-}).addTo(map);
 
 /* -----------------------------------------------------------------------------------
 // Add a marker to the map for Los Angeles, California.
