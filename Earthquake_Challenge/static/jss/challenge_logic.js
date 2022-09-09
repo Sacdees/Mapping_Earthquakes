@@ -151,3 +151,91 @@ legend.onAdd = function() {
     
   });
 });
+
+  // 4. Use the same style as the earthquake data.
+  function styleInfo(feature) {
+    return {
+      opacity: 1,
+      fillOpacity: 1,
+      fillColor: getColor(feature.properties.mag),
+      color: "#000000",
+      radius: getRadius(feature.properties.mag),
+      stroke: true,
+      weight: 0.5
+    };
+  }   
+
+  // 5. Change the color function to use three colors for the major earthquakes based on the magnitude of the earthquake.
+  function getColor(magnitude) {
+    if (magnitude > 5) {
+      return "#ea2c2c";
+    }
+    if (magnitude > 4) {
+      return "#ea822c";
+    }
+    return "#98ee00";
+  }
+
+  // 6. Use the function that determines the radius of the earthquake marker based on its magnitude.
+   function getRadius(magnitude) {
+     if (magnitude === 0) {
+       return 1;
+      }
+      return magnitude * 4;
+    }
+
+    // 7. Creating a GeoJSON layer with the retrieved data that adds a circle to the map 
+  // sets the style of the circle, and displays the magnitude and location of the earthquake
+  //  after the marker has been created and styled.
+  L.geoJson(data, {
+    pointToLayer: function(feature, latlng) {
+      return L.circleMarker(latlng);
+    },
+    style: styleInfo,
+    onEachFeature: function(feature, layer) {
+      layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
+    }
+  }).addTo(majorEarthquakes);
+  // 8. Add the major earthquakes layer to the map.
+  majorEarthquakes.addTo(map);
+  // 9. Close the braces and parentheses for the major earthquake data.
+  
+
+  // Here we create a legend control object.
+let legend = L.control({
+   position: "bottomright"
+});
+
+// Then add all the details for the legend
+legend.onAdd = function() {
+    let div = L.DomUtil.create("div", "info legend");
+    const magnitudes = [0, 1, 2, 3, 4, 5];
+    const colors = [
+      "#98ee00",
+      "#d4ee00",
+      "#eecc00",
+      "#ee9c00",
+      "#ea822c",
+      "#ea2c2c"
+    ];
+
+  // Looping through our intervals to generate a label with a colored square for each interval.
+    for (var i = 0; i < magnitudes.length; i++) {
+      console.log(colors[i]);
+      div.innerHTML +=
+        "<i style='background: " + colors[i] + "'></i> " +
+        magnitudes[i] + (magnitudes[i + 1] ? "&ndash;" + magnitudes[i + 1] + "<br>" : "+");
+      }
+      return div;
+    };
+
+  // Finally, we add our legend to the map.
+  legend.addTo(map);  
+
+   // Use d3.json to make a call to get our Tectonic Plate geoJSON data.
+   d3.json("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json").then((data) => {
+    console.log(data);  
+    L.geoJson(data, {
+      style: {color: "#703606", weight: 3},
+    }).addTo(tectonicPlates); 
+  });
